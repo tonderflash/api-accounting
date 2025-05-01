@@ -36,3 +36,26 @@ jobs:
 
       - name: Run Lint (Checkstyle)
         run: mvn -B -DskipTests verify
+
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Terraform Lint and Validate
+        run: |
+          cd infra
+          docker compose run --rm terraform -chdir=deploy/ init -backend=false
+          docker compose run --rm terraform -chdir=setup/ init -backend=false
+          docker compose run --rm terraform -chdir=setup/ validate
+          docker compose run --rm terraform -chdir=setup/ fmt -check -recursive
+          docker compose run --rm terraform -chdir=deploy/ validate
+          docker compose run --rm terraform -chdir=deploy/ fmt -check -recursive
