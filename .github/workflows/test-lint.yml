@@ -1,0 +1,13 @@
+name: Test and Lint
+
+on:
+  workflow_call:
+    secrets:
+      DOCKERHUB_USER:
+        required: true
+        description: DockerHub username
+      DOCKERHUB_TOKEN:
+        required: true
+        description: DockerHub token
+
+jobs:

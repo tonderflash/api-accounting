@@ -6,11 +6,11 @@ terraform {
     }
   }
   backend "s3" {
-    bucket         = "api-accounting-tf-state"
+    bucket         = "api-accounting-app-tf-state"
     key            = "tf-state-setup"
     region         = "us-east-2"
     encrypt        = true
-    dynamodb_table = "api-accounting-tf-lock"
+    dynamodb_table = "accounting-app-api-tf-lock"
   }
 }
 

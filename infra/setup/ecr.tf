@@ -1,3 +1,5 @@
+# Purpose: Create an ECR repository for storing Docker images
+
 resource "aws_ecr_repository" "app" {
   name                 = "api-accounting-app"
   image_tag_mutability = "MUTABLE"
