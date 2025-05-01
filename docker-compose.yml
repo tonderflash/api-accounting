@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/app
+      - ~/.m2:/root/.m2
+    restart: on-failure
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    command: >
+      java -jar app.jar
+  
+  proxy:
+    build:
+      context: ./proxy
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - "8000:8000"
+    volumes:
+      - static-data:/vol/static
+    environment:
+      - APP_HOST=app
+      - APP_PORT=8080
+
+volumes:
+  static-data:
