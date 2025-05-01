@@ -5,9 +5,9 @@ services:
     build:
       context: .
     ports:
-      - "8080:8080"
+      - "8081:8080"
     volumes:
-      - ./:/app
+      # - ./:/app  # Removed this line to use the JAR from the image
       - ~/.m2:/root/.m2
     restart: on-failure
     environment:

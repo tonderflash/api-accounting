@@ -1,0 +1,23 @@
+# Maven output
+target/
+
+# Local Maven repository cache (mounted separately when needed)
+.m2/
+
+# IntelliJ / Eclipse / VSCode project files
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# Git & CI
+.git
+.github/
+
+# Terraform state & modules
+infra/
+
+# Misc
+Dockerfile*
+**/__pycache__/

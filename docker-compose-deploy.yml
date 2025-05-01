@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  app:
+    image: ${ECR_REGISTRY}/api-accounting-app:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "8080:8080"
+    restart: always
+
+  proxy:
+    image: ${ECR_REGISTRY}/api-accounting-proxy:latest
+    depends_on:
+      - app
+    ports:
+      - "80:8000"
+    restart: always
