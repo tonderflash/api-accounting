@@ -55,59 +55,56 @@ resource "aws_ecs_task_definition" "api" {
 
   container_definitions = jsonencode(
     [
-    #   {
-    #     name              = "api"
-    #     image             = var.ecr_app_image
-    #     essential         = true
-    #     memoryReservation = 256
-    #     user              = "django-user"
-    #     environment = [
-    #       {
-    #         name  = "DJANGO_SECRET_KEY"
-    #         value = var.django_secret_key
-    #       },
-    #       {
-    #         name  = "DB_HOST"
-    #         value = aws_db_instance.main.address
-    #       },
-    #       {
-    #         name  = "DB_NAME"
-    #         value = aws_db_instance.main.db_name
-    #       },
-    #       {
-    #         name  = "DB_USER"
-    #         value = aws_db_instance.main.username
-    #       },
-    #       {
-    #         name  = "DB_PASS"
-    #         value = aws_db_instance.main.password
-    #       },
-    #       {
-    #         name  = "ALLOWED_HOSTS"
-    #         value = aws_route53_record.app.fqdn
-    #       }
-    #     ]
-    #     mountPoints = [
-    #       {
-    #         readOnly      = false
-    #         containerPath = "/vol/web/static"
-    #         sourceVolume  = "static"
-    #       },
-    #       {
-    #         readOnly      = false
-    #         containerPath = "/vol/web/media"
-    #         sourceVolume  = "efs-media"
-    #       }
-    #     ],
-    #     logConfiguration = {
-    #       logDriver = "awslogs"
-    #       options = {
-    #         awslogs-group         = aws_cloudwatch_log_group.ecs_task_logs.name
-    #         awslogs-region        = data.aws_region.current.name
-    #         awslogs-stream-prefix = "api"
-    #       }
-    #     }
-    #   },
+      {
+        name              = "api"
+        image             = var.ecr_app_image
+        essential         = true
+        memoryReservation = 256
+        user              = "django-user"
+        environment = [
+         
+          {
+            name  = "DB_HOST"
+            value = aws_db_instance.main.address
+          },
+          {
+            name  = "DB_NAME"
+            value = aws_db_instance.main.db_name
+          },
+          {
+            name  = "DB_USER"
+            value = aws_db_instance.main.username
+          },
+          {
+            name  = "DB_PASS"
+            value = aws_db_instance.main.password
+          },
+          {
+            name  = "ALLOWED_HOSTS"
+            value = "*"
+          }
+        ]
+        mountPoints = [
+          {
+            readOnly      = false
+            containerPath = "/vol/web/static"
+            sourceVolume  = "static"
+          },
+          {
+            readOnly      = false
+            containerPath = "/vol/web/media"
+            sourceVolume  = "efs-media"
+          }
+        ],
+        logConfiguration = {
+          logDriver = "awslogs"
+          options = {
+            awslogs-group         = aws_cloudwatch_log_group.ecs_task_logs.name
+            awslogs-region        = data.aws_region.current.name
+            awslogs-stream-prefix = "api"
+          }
+        }
+      },
       {
         name              = "proxy"
         image             = var.ecr_proxy_image
@@ -173,73 +170,71 @@ resource "aws_ecs_task_definition" "api" {
   }
 }
 
-# resource "aws_security_group" "ecs_service" {
-#   description = "Access rules for the ECS service."
-#   name        = "${local.prefix}-ecs-service"
-#   vpc_id      = aws_vpc.main.id
+resource "aws_security_group" "ecs_service" {
+  description = "Access rules for the ECS service."
+  name        = "${local.prefix}-ecs-service"
+  vpc_id      = aws_vpc.main.id
 
-#   # Outbound access to endpoints
-#   egress {
-#     from_port   = 443
-#     to_port     = 443
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
+  # Outbound access to endpoints
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-#   # RDS connectivity
-#   egress {
-#     from_port = 5432
-#     to_port   = 5432
-#     protocol  = "tcp"
-#     cidr_blocks = [
-#       aws_subnet.private_a.cidr_block,
-#       aws_subnet.private_b.cidr_block,
-#     ]
-#   }
+  # RDS connectivity
+  egress {
+    from_port = 5432
+    to_port   = 5432
+    protocol  = "tcp"
+    cidr_blocks = [
+      aws_subnet.private_a.cidr_block,
+      aws_subnet.private_b.cidr_block,
+    ]
+  }
 
-#   # NFS Port for EFS volumes
-#   egress {
-#     from_port = 2049
-#     to_port   = 2049
-#     protocol  = "tcp"
-#     cidr_blocks = [
-#       aws_subnet.private_a.cidr_block,
-#       aws_subnet.private_b.cidr_block,
-#     ]
-#   }
+  # NFS Port for EFS volumes
+  egress {
+    from_port = 2049
+    to_port   = 2049
+    protocol  = "tcp"
+    cidr_blocks = [
+      aws_subnet.private_a.cidr_block,
+      aws_subnet.private_b.cidr_block,
+    ]
+  }
 
-#   # HTTP inbound access
-#   ingress {
-#     from_port = 8000
-#     to_port   = 8000
-#     protocol  = "tcp"
-#     security_groups = [
-#       aws_security_group.lb.id
-#     ]
-#   }
-# }
+#   HTTP inbound access
+  ingress {
+    from_port = 8000
+    to_port   = 8000
+    protocol  = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 
-# resource "aws_ecs_service" "api" {
-#   name                   = "${local.prefix}-api"
-#   cluster                = aws_ecs_cluster.main.name
-#   task_definition        = aws_ecs_task_definition.api.family
-#   desired_count          = 1
-#   launch_type            = "FARGATE"
-#   platform_version       = "1.4.0"
-#   enable_execute_command = true
+resource "aws_ecs_service" "api" {
+  name                   = "${local.prefix}-api"
+  cluster                = aws_ecs_cluster.main.name
+  task_definition        = aws_ecs_task_definition.api.family
+  desired_count          = 1
+  launch_type            = "FARGATE"
+  platform_version       = "1.4.0"
+  enable_execute_command = true
 
-#   network_configuration {
-#     subnets = [
-#       aws_subnet.private_a.id,
-#       aws_subnet.private_b.id
-#     ]
+  network_configuration {
+    subnets = [
+      aws_subnet.private_a.id,
+      aws_subnet.private_b.id
+    ]
 
-#     security_groups = [aws_security_group.ecs_service.id]
-#   }
+    security_groups = [aws_security_group.ecs_service.id]
+  }
 
 #   load_balancer {
 #     target_group_arn = aws_lb_target_group.api.arn
 #     container_name   = "proxy"
 #     container_port   = 8000
 #   }
-# }
+}
