@@ -51,7 +51,8 @@ data "aws_iam_policy_document" "ecr" {
       "ecr:UploadLayerPart",
       "ecr:InitiateLayerUpload",
       "ecr:BatchCheckLayerAvailability",
-      "ecr:PutImage"
+      "ecr:PutImage",
+      "ecr:DescribeRepositories",
     ]
     resources = [
       aws_ecr_repository.app.arn,
@@ -243,7 +244,8 @@ data "aws_iam_policy_document" "iam" {
       "iam:AttachRolePolicy",
       "iam:TagRole",
       "iam:TagPolicy",
-      "iam:PassRole"
+      "iam:PassRole",
+      "iam:GetUser",
     ]
     resources = ["*"]
   }
