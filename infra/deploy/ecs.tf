@@ -62,21 +62,16 @@ resource "aws_ecs_task_definition" "api" {
         memoryReservation = 256
 
         environment = [
-
           {
-            name  = "DB_HOST"
-            value = aws_db_instance.main.address
+            name  = "SPRING_DATASOURCE_URL"
+            value = "jdbc:postgresql://${aws_db_instance.main.address}:5432/${aws_db_instance.main.db_name}"
           },
           {
-            name  = "DB_NAME"
-            value = aws_db_instance.main.db_name
-          },
-          {
-            name  = "DB_USER"
+            name  = "SPRING_DATASOURCE_USERNAME"
             value = aws_db_instance.main.username
           },
           {
-            name  = "DB_PASS"
+            name  = "SPRING_DATASOURCE_PASSWORD"
             value = aws_db_instance.main.password
           },
           {
