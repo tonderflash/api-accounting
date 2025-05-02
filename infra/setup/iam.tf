@@ -53,6 +53,7 @@ data "aws_iam_policy_document" "ecr" {
       "ecr:BatchCheckLayerAvailability",
       "ecr:PutImage",
       "ecr:DescribeRepositories",
+      "ecr:ListTagsForResource",
     ]
     resources = [
       aws_ecr_repository.app.arn,
@@ -246,6 +247,8 @@ data "aws_iam_policy_document" "iam" {
       "iam:TagPolicy",
       "iam:PassRole",
       "iam:GetUser",
+      "iam:ListAccessKeys",
+      "iam:ListAttachedUserPolicies",
     ]
     resources = ["*"]
   }
