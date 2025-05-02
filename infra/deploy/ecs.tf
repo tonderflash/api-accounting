@@ -108,8 +108,8 @@ resource "aws_ecs_task_definition" "api" {
         user              = "nginx"
         portMappings = [
           {
-            containerPort = 8000
-            hostPort      = 8000
+            containerPort = 8080
+            hostPort      = 80
           }
         ]
         environment = [
@@ -202,6 +202,14 @@ resource "aws_security_group" "ecs_service" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  #   HTTP inbound access (puerto 80)
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_ecs_service" "api" {
@@ -215,10 +223,10 @@ resource "aws_ecs_service" "api" {
 
   network_configuration {
     subnets = [
-      aws_subnet.private_a.id,
-      aws_subnet.private_b.id
+      aws_subnet.public_a.id,
+      aws_subnet.public_b.id
     ]
     assign_public_ip = true
-    security_groups  = [aws_security_group.ecs_service.id]
+    security_groups = [aws_security_group.ecs_service.id]
   }
 }
