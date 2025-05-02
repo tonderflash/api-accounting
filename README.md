@@ -8,4 +8,10 @@ Minimal Spring Boot project scaffold for Ultra Accounting Ledger REST API.
 mvn spring-boot:run
 ```
 
+### Docker
+
+```bash
+docker run -p 8080:8080 api-accounting-app:latest
+```
+
 Application will start on `http://localhost:8080`.
