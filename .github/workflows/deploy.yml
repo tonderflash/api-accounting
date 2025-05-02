@@ -39,12 +39,13 @@ jobs:
           docker build --compress -t ${{ vars.ECR_REPO_PROXY}}:$GITHUB_SHA proxy/
           docker push ${{ vars.ECR_REPO_PROXY}}:$GITHUB_SHA
 
-      - name: Ensure RDS service-linked role exists
+      - name: Ensure service-linked roles exist
         env:
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          aws iam create-service-linked-role --aws-service-name rds.amazonaws.com || echo "Service-linked role already exists"
+          aws iam create-service-linked-role --aws-service-name rds.amazonaws.com || echo "RDS Service-linked role already exists"
+          aws iam create-service-linked-role --aws-service-name ecs.amazonaws.com || echo "ECS Service-linked role already exists"
 
       - name: Terraform Apply (IAM setup)
         env:
