@@ -27,27 +27,29 @@ public class TransactionService {
     /**
      * Add a new deposit transaction
      * @param request the deposit details
-     * @return true if successful
+     * @return the created transaction with ID
      */
-    public boolean addDeposit(DepositRequest request) {
-        return coreAdapter.addDeposit(
+    public TransactionResponse addDeposit(DepositRequest request) {
+        TransactionEntity savedTransaction = coreAdapter.addDeposit(
             request.getDescription(),
             request.getVendor(),
             request.getAmount()
         );
+        return mapper.toTransactionResponse(savedTransaction);
     }
 
     /**
      * Add a new payment transaction
      * @param request the payment details
-     * @return true if successful
+     * @return the created transaction with ID
      */
-    public boolean makePayment(PaymentRequest request) {
-        return coreAdapter.makePayment(
+    public TransactionResponse makePayment(PaymentRequest request) {
+        TransactionEntity savedTransaction = coreAdapter.makePayment(
             request.getDescription(),
             request.getVendor(),
             request.getAmount()
         );
+        return mapper.toTransactionResponse(savedTransaction);
     }
 
     /**
