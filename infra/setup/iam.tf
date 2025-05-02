@@ -145,7 +145,24 @@ data "aws_iam_policy_document" "rds" {
       "rds:DeleteDBInstance",
       "rds:ListTagsForResource",
       "rds:ModifyDBInstance",
-      "rds:AddTagsToResource"
+      "rds:AddTagsToResource",
+      "rds:RemoveTagsFromResource",
+      "rds:CreateTags",
+      "rds:DeleteTags",
+      "rds:ModifyDBSubnetGroup"
+    ]
+    resources = ["*"]
+  }
+  
+  # Permitir acceso a EC2 para validar subnets al crear DB subnet groups
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:DescribeSubnets",
+      "ec2:DescribeVpcs",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeSecurityGroups"
     ]
     resources = ["*"]
   }
