@@ -132,7 +132,7 @@ resource "aws_ecs_task_definition" "api" {
           {
             readOnly      = true
             containerPath = "/vol/media"
-            sourceVolume  = "efs-media"
+            # sourceVolume  = "efs-media"
           }
         ]
         logConfiguration = {
