@@ -39,14 +39,31 @@ jobs:
           docker build --compress -t ${{ vars.ECR_REPO_PROXY}}:$GITHUB_SHA proxy/
           docker push ${{ vars.ECR_REPO_PROXY}}:$GITHUB_SHA
 
+      - name: Ensure service-linked roles exist
+        env:
+          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws iam create-service-linked-role --aws-service-name rds.amazonaws.com || echo "RDS Service-linked role already exists"
+          aws iam create-service-linked-role --aws-service-name ecs.amazonaws.com || echo "ECS Service-linked role already exists"
+
+      - name: Terraform Apply (IAM setup)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          cd infra/
+          docker compose run --rm terraform -chdir=setup/ init
+          docker compose run --rm terraform -chdir=setup/ apply -auto-approve
+
       - name: Terraform Apply
         env:
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }}
+          TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
         run: |
-          export TF_VAR_ecr_app_images="${{ vars.ECR_REPO_APP }}:${GITHUB_SHA}"
-          export TF_VAR_ecr_proxy_images="${{ vars.ECR_REPO_PROXY }}:${GITHUB_SHA}"
+          export TF_VAR_ecr_app_image="${{ vars.ECR_REPO_APP }}:${GITHUB_SHA}"
+          export TF_VAR_ecr_proxy_image="${{ vars.ECR_REPO_PROXY }}:${GITHUB_SHA}"
           workspace=$(cat .workspace)
           cd infra/
           docker compose run --rm terraform -chdir=deploy/ init
