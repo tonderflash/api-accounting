@@ -4,21 +4,24 @@ import com.pluralsight.api.adapter.CoreApplicationAdapter;
 import com.pluralsight.api.dto.request.DepositRequest;
 import com.pluralsight.api.dto.request.PaymentRequest;
 import com.pluralsight.api.dto.response.TransactionResponse;
+import com.pluralsight.api.entity.TransactionEntity;
+import com.pluralsight.api.util.TransactionMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
 
     private final CoreApplicationAdapter coreAdapter;
+    private final TransactionMapper mapper;
 
     @Autowired
-    public TransactionService(CoreApplicationAdapter coreAdapter) {
+    public TransactionService(CoreApplicationAdapter coreAdapter, TransactionMapper mapper) {
         this.coreAdapter = coreAdapter;
+        this.mapper = mapper;
     }
 
     /**
@@ -54,8 +57,8 @@ public class TransactionService {
     public List<TransactionResponse> getAllTransactions() {
         return coreAdapter.getAllTransactions()
             .stream()
-            .map(this::mapToTransactionResponse)
-            .collect(Collectors.toList());
+            .map(mapper::toTransactionResponse)
+            .toList();
     }
 
     /**
@@ -66,8 +69,8 @@ public class TransactionService {
         return coreAdapter.getAllTransactions()
             .stream()
             .filter(t -> "DEPOSIT".equals(t.getType()))
-            .map(this::mapToTransactionResponse)
-            .collect(Collectors.toList());
+            .map(mapper::toTransactionResponse)
+            .toList();
     }
 
     /**
@@ -78,20 +81,7 @@ public class TransactionService {
         return coreAdapter.getAllTransactions()
             .stream()
             .filter(t -> "PAYMENT".equals(t.getType()))
-            .map(this::mapToTransactionResponse)
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * Map adapter transaction to response DTO
-     */
-    private TransactionResponse mapToTransactionResponse(CoreApplicationAdapter.Transaction transaction) {
-        return TransactionResponse.builder()
-            .description(transaction.getDescription())
-            .vendor(transaction.getVendor())
-            .amount(transaction.getAmount())
-            .type(transaction.getType())
-            .date(transaction.getDate())
-            .build();
+            .map(mapper::toTransactionResponse)
+            .toList();
     }
 }
