@@ -29,42 +29,18 @@ public class TransactionController {
      * Create a new deposit
      */
     @PostMapping("/deposit")
-    public ResponseEntity<Map<String, Object>> addDeposit(@Valid @RequestBody DepositRequest request) {
-        boolean success = transactionService.addDeposit(request);
-        
-        if (success) {
-            return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Deposit added successfully",
-                "data", request
-            ));
-        } else {
-            return ResponseEntity.badRequest().body(Map.of(
-                "success", false,
-                "message", "Failed to add deposit"
-            ));
-        }
+    public ResponseEntity<TransactionResponse> addDeposit(@Valid @RequestBody DepositRequest request) {
+        TransactionResponse transaction = transactionService.addDeposit(request);
+        return ResponseEntity.ok(transaction);
     }
 
     /**
      * Create a new payment
      */
     @PostMapping("/payment")
-    public ResponseEntity<Map<String, Object>> makePayment(@Valid @RequestBody PaymentRequest request) {
-        boolean success = transactionService.makePayment(request);
-        
-        if (success) {
-            return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Payment added successfully",
-                "data", request
-            ));
-        } else {
-            return ResponseEntity.badRequest().body(Map.of(
-                "success", false,
-                "message", "Failed to add payment"
-            ));
-        }
+    public ResponseEntity<TransactionResponse> makePayment(@Valid @RequestBody PaymentRequest request) {
+        TransactionResponse transaction = transactionService.makePayment(request);
+        return ResponseEntity.ok(transaction);
     }
 
     /**

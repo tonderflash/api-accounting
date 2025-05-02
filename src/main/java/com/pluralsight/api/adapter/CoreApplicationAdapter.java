@@ -43,9 +43,9 @@ public class CoreApplicationAdapter {
      */
 
     /**
-     * Adds a deposit transaction 
+     * Adds a deposit transaction and returns the saved entity with ID
      */
-    public boolean addDeposit(String description, String vendor, double amount) {
+    public TransactionEntity addDeposit(String description, String vendor, double amount) {
         try {
             TransactionEntity transaction = new TransactionEntity();
             transaction.setDate(LocalDateTime.now());
@@ -53,19 +53,19 @@ public class CoreApplicationAdapter {
             transaction.setVendor(vendor);
             transaction.setAmount(amount);
             transaction.setType("DEPOSIT");
-            transactionRepository.save(transaction);
-            logger.info("Deposit added successfully: {} from {}", amount, vendor);
-            return true;
+            TransactionEntity savedTransaction = transactionRepository.save(transaction);
+            logger.info("Deposit added successfully: {} from {}, ID: {}", amount, vendor, savedTransaction.getId());
+            return savedTransaction;
         } catch (Exception e) {
             logger.error("Error adding deposit: {}", e.getMessage(), e);
-            return false;
+            throw new RuntimeException("Failed to add deposit", e);
         }
     }
 
     /**
-     * Adds a payment transaction (stored as negative amount like the console app)
+     * Adds a payment transaction (stored as negative amount) and returns the saved entity with ID
      */
-    public boolean makePayment(String description, String vendor, double amount) {
+    public TransactionEntity makePayment(String description, String vendor, double amount) {
         try {
             TransactionEntity transaction = new TransactionEntity();
             transaction.setDate(LocalDateTime.now());
@@ -73,12 +73,12 @@ public class CoreApplicationAdapter {
             transaction.setVendor(vendor);
             transaction.setAmount(-Math.abs(amount)); // ensure negative value
             transaction.setType("PAYMENT");
-            transactionRepository.save(transaction);
-            logger.info("Payment made successfully: {} to {}", amount, vendor);
-            return true;
+            TransactionEntity savedTransaction = transactionRepository.save(transaction);
+            logger.info("Payment made successfully: {} to {}, ID: {}", amount, vendor, savedTransaction.getId());
+            return savedTransaction;
         } catch (Exception e) {
             logger.error("Error making payment: {}", e.getMessage(), e);
-            return false;
+            throw new RuntimeException("Failed to make payment", e);
         }
     }
 
