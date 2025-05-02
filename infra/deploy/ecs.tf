@@ -218,7 +218,7 @@ resource "aws_ecs_service" "api" {
       aws_subnet.private_a.id,
       aws_subnet.private_b.id
     ]
-
+    assign_public_ip = true
     security_groups = [aws_security_group.ecs_service.id]
   }
 
