@@ -29,3 +29,14 @@ variable "ecr_proxy_image" {
 variable "ecr_app_image" {
   description = "Path to the ECR repo with the API image"
 }
+
+variable "subdomain" {
+  description = "Subdomain for each environment"
+  type        = map(string)
+
+  default = {
+    prod    = "api"
+    staging = "api.staging"
+    dev     = "api.dev"
+  }
+}
