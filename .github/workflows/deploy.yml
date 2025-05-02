@@ -39,6 +39,15 @@ jobs:
           docker build --compress -t ${{ vars.ECR_REPO_PROXY}}:$GITHUB_SHA proxy/
           docker push ${{ vars.ECR_REPO_PROXY}}:$GITHUB_SHA
 
+      - name: Terraform Apply (IAM setup)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          cd infra/
+          docker compose run --rm terraform -chdir=setup/ init
+          docker compose run --rm terraform -chdir=setup/ apply -auto-approve
+
       - name: Terraform Apply
         env:
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
