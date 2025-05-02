@@ -1,7 +1,7 @@
 package com.pluralsight.api.util;
 
-import com.pluralsight.api.adapter.CoreApplicationAdapter.Transaction;
 import com.pluralsight.api.dto.response.TransactionResponse;
+import com.pluralsight.api.entity.TransactionEntity;
 
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ public class TransactionMapper {
     /**
      * Maps from core Transaction to TransactionResponse DTO
      */
-    public TransactionResponse toTransactionResponse(Transaction transaction) {
+    public TransactionResponse toTransactionResponse(TransactionEntity transaction) {
         return TransactionResponse.builder()
             .description(transaction.getDescription())
             .vendor(transaction.getVendor())
