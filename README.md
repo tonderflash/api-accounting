@@ -132,9 +132,9 @@ When deployed, the stack will be reachable via an Application Load Balancer fron
 
 This application uses a comprehensive AWS infrastructure for deployment:
 
-![AWS Architecture Diagram](https://i.imgur.com/8mW3gCM.png)
+[View AWS Architecture Diagram](https://imgur.com/a/lBcg6C7)
 
-> **Note:** The architecture diagram is hosted on Imgur for easy viewing
+> **Note:** Click the link above to view the architecture diagram on Imgur
 
 The architecture leverages:
 - **VPC** with public and private subnets across multiple AZs
