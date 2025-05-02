@@ -27,6 +27,9 @@ provider "aws" {
   }
 }
 
+# Data source para obtener la región AWS actual
+data "aws_region" "current" {}
+
 locals {
   prefix = "${var.prefix}-${terraform.workspace}"
 }
